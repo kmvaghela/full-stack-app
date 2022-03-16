@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 // import { getImages } from "../redux/apiCalls";
 import { useDispatch, useSelector } from "react-redux";
-import { Modal, Pagination } from 'antd';
+import { Modal, Pagination, Button } from 'antd';
 import axios from "axios";
+// import { updateImage } from "../redux/apiCalls";
 
 const Container = styled.div`
   display:flex;
@@ -55,14 +56,14 @@ flex-direction:column;
 align-items:center;
 justify-content:center;
 `;
-const Button = styled.button`
-width: 30%;
-border: none;
-padding: 10px 10px;
-background-color: #B98F09;
-color: #6E260E;
-cursor: pointer;
-`;
+// const Button = styled.button`
+// width: 30%;
+// border: none;
+// padding: 10px 10px;
+// background-color: #B98F09;
+// color: #6E260E;
+// cursor: pointer;
+// `;
 
 const NormalUser = () => {
 
@@ -75,7 +76,6 @@ const NormalUser = () => {
     const [category, setCategory] = useState("");
 
     useEffect(() => {
-        // getImages(dispatch);
         const getImages = async () => {
             try {
                 const res = await axios.get(
@@ -101,8 +101,24 @@ const NormalUser = () => {
         setIsModalVisible(false);
     };
 
-    const onDownload = () => {
-        setDownloadCount(downloadCount + 1)
+    const onDownload = async (item) => {
+        console.log(item);
+        let id = item._id;
+        let name = item.name;
+        let img = item.img;
+        let category = item.category;
+        let contributor = item.contributor;
+        let downloads = item.downloads;
+        setDownloadCount(downloads + 1);
+        try {
+            const res = await axios.put(`http://localhost:4000/api/contributor/` + id, {
+                name,
+                img,
+                category,
+                contributor,
+                downloads: downloads+1,
+            });
+        } catch (error) { }
     };
     const handleChange = (e) => {
         setCategory(e.target.value);
@@ -117,11 +133,11 @@ const NormalUser = () => {
                     <Label>Technology</Label>
                 </RadioInput>
                 <RadioInput>
-                    <input type="radio" name="category"  value="Marketing" onChange={handleChange} />
+                    <input type="radio" name="category" value="Marketing" onChange={handleChange} />
                     <Label>Marketing</Label>
                 </RadioInput>
                 <RadioInput>
-                    <input type="radio" name="category"  value="B2B" onChange={handleChange} />
+                    <input type="radio" name="category" value="B2B" onChange={handleChange} />
                     <Label>B2B</Label>
                 </RadioInput>
             </Left>
@@ -129,22 +145,22 @@ const NormalUser = () => {
                 <RightBody>
                     {images.map((item, i) => {
                         return <>
-                            <Item key={i}>
+                            <Item key={item._id}>
                                 <Image src={item.img} alt="" onClick={showModal} />
                                 <Modal title="Download Image" footer={null} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                                     <ModalContainer>
                                         <Item>
                                             <Image src={item.img} alt="" />
-                                            <h4>Contributor: xyz</h4>
+                                            <h4>Contributor: {item.contributor}</h4>
                                             <h4>Image Name: {item.name}</h4>
-                                            <h4>Total Download: {downloadCount}</h4>
+                                            <h4>Total Download: {item.downloads}</h4>
                                         </Item>
-                                        <Button onClick={onDownload}>Download</Button>
+                                        <Button onClick={() => { onDownload(item) }}>Download</Button>
                                     </ModalContainer>
                                 </Modal>
-                                <h4>Contributor: xyz</h4>
+                                <h4>Contributor: {item.contributor}</h4>
                                 <h4>Image Name: {item.name}</h4>
-                                <h4>Total Download: {downloadCount}</h4>
+                                <h4>Total Download: {item.downloads}</h4>
                             </Item>
                         </>
                     })}

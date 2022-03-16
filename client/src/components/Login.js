@@ -63,7 +63,6 @@ const Login = () => {
     e.preventDefault();
     login(dispatch, { name, password });
     if (!error) {
-      console.log(currentUser);
       if (currentUser != null) {
         if (currentUser.user_type === "Contributor") {
           navigate("/contributor");

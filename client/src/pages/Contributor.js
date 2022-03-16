@@ -63,10 +63,11 @@ const Contributor = () => {
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
   const imagesData = useSelector((state) => state.image.imagesData);
+  const user = useSelector((state) => state.user.currentUser.name);
+
   const [page, setPage] = useState(1);
   useEffect(() => {
     getImages(dispatch);
-    console.log(imagesData.length)
   }, [dispatch]);
 
   const columns = [
@@ -78,12 +79,12 @@ const Contributor = () => {
     {
       title: 'Category',
       dataIndex: 'category',
-      key: 'age',
+      key: 'category',
     },
     {
       title: 'Total Download',
       dataIndex: 'totalDownload',
-      key: 'address',
+      key: 'totalDownload',
     },
   ];
 
@@ -94,7 +95,7 @@ const Contributor = () => {
       key: `${i}`,
       name: imagesData[i].name,
       category: imagesData[i].category,
-      totalDownload: 0,
+      totalDownload: imagesData[i].downloads,
     });
   }
 
@@ -108,7 +109,6 @@ const Contributor = () => {
   const handleClick = (e) => {
     e.preventDefault();
 
-    console.log("category :", inputs);
     const fileName = new Date().getTime() + image.name;
     const storage = getStorage(app);
     const storageRef = ref(storage, fileName);
@@ -147,6 +147,7 @@ const Contributor = () => {
           const imageData = {
             ...inputs,
             img: downloadURL,
+            contributor:user,
           };
           addImage(imageData, dispatch);
         });

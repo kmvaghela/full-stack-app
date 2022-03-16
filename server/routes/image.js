@@ -24,13 +24,32 @@ router.get("/", async (req, res) => {
 
         if (qCategory) {
             images = await Image.find({
-                category:{$in: [qCategory]},
+                category: { $in: [qCategory] },
             })
         } else {
             images = await Image.find();
         }
 
         res.status(200).json(images);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+//UPDATE
+router.put("/:id", async (req, res) => {
+    try {
+        const updatedImage = await Image.findByIdAndUpdate(
+            req.params.id,
+            {
+                name: req.body.name,
+                img: req.body.img,
+                category: req.body.category,
+                contributor: req.body.contributor,
+                downloads: req.body.downloads,
+            }
+        );
+        res.status(200).json(updatedImage);
     } catch (err) {
         res.status(500).json(err);
     }

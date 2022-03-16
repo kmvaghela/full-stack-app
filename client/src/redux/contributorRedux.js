@@ -34,6 +34,19 @@ const contributorSlice = createSlice({
             state.isFetching = false;
             state.error = true;
         },
+        //UPDATE
+        updateImageStart: (state) => {
+            state.isFetching = true;
+            state.error = false;
+        },
+        updateImageSuccess: (state, action) => {
+            state.isFetching = false;
+            state.imagesData[state.imagesData.findIndex((item) => item.id === action.payload.id)] = action.payload.image;
+        },
+        updateImageFailure: (state) => {
+            state.isFetching = false;
+            state.error = true;
+        },
     },
 })
 
@@ -44,5 +57,8 @@ export const {
     getImageStart,
     getImageSuccess,
     getImageFailure,
+    updateImageStart,
+    updateImageSuccess,
+    updateImageFailure,
 } = contributorSlice.actions;
 export default contributorSlice.reducer;

@@ -1,4 +1,4 @@
-import { publicRequest,userRequest } from "../requestMethods";
+import { publicRequest, userRequest } from "../requestMethods";
 import { loginStart, loginSuccess, loginFailure, RegisterStart, RegisterSuccess, RegisterFailure, } from "./userRedux";
 import {
     addImageStart,
@@ -7,6 +7,9 @@ import {
     getImageStart,
     getImageSuccess,
     getImageFailure,
+    updateImageStart,
+    updateImageSuccess,
+    updateImageFailure,
 } from "./contributorRedux";
 
 export const login = async (dispatch, user) => {
@@ -46,5 +49,16 @@ export const getImages = async (dispatch) => {
         dispatch(getImageSuccess(res.data));
     } catch (error) {
         dispatch(getImageFailure())
+    }
+};
+
+export const updateImage = async (id, image, dispatch) => {
+    dispatch(updateImageStart());
+    try {
+        const res = await userRequest.put(`/contributor/${id}`, image);
+        dispatch(updateImageSuccess({ id, image }));
+
+    } catch (error) {
+        dispatch(updateImageFailure())
     }
 };

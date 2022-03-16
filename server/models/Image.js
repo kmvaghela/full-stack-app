@@ -5,6 +5,8 @@ const ImageSchema = new mongoose.Schema(
         name: { type: String, required: true, unique: true },
         img: { type: String, required: true },
         category: { type: String, required: true },
+        contributor: { type: String, required: true },
+        downloads:{type: Number},
     },
     { timestamps: true }
 );
