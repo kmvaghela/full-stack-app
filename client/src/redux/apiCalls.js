@@ -1,4 +1,4 @@
-import { publicRequest } from "../requestMethods";
+import { publicRequest,userRequest } from "../requestMethods";
 import { loginStart, loginSuccess, loginFailure, RegisterStart, RegisterSuccess, RegisterFailure, } from "./userRedux";
 import {
     addImageStart,
@@ -32,7 +32,7 @@ export const Register = async (details, dispatch) => {
 export const addImage = async (imageData, dispatch) => {
     dispatch(addImageStart());
     try {
-        const res = await publicRequest.post("/contributor/", imageData);
+        const res = await userRequest.post("/contributor", imageData);
         dispatch(addImageSuccess(res.data));
     } catch (error) {
         dispatch(addImageFailure())
@@ -42,7 +42,7 @@ export const addImage = async (imageData, dispatch) => {
 export const getImages = async (dispatch) => {
     dispatch(getImageStart());
     try {
-        const res = await publicRequest.get("/images");
+        const res = await publicRequest.get("/contributor");
         dispatch(getImageSuccess(res.data));
     } catch (error) {
         dispatch(getImageFailure())

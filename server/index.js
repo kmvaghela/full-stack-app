@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoute);
-app.use("/api/images", imageRoute);
+app.use("/api/contributor", imageRoute);
 
 app.listen(process.env.PORT || 4000, () => {
     console.log("Backend server is running!")

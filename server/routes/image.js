@@ -14,16 +14,17 @@ router.post("/", verifyTokenAndContributor, async (req, res) => {
 })
 
 //GET ALL 
-router.get("/", verifyTokenAndNormalUser, async (req, res) => {
+router.get("/", async (req, res) => {
 
     try {
         let images;
+        const qCategory = req.query.category;
+
+        images = await Image.find();
 
         if (qCategory) {
             images = await Image.find({
-                category: {
-                    $in: [qCategory],
-                },
+                category:{$in: [qCategory]},
             })
         } else {
             images = await Image.find();

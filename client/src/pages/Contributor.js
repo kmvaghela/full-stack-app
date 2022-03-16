@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table } from 'antd';
 import styled from "styled-components";
-import { addImage } from "../redux/apiCalls";
-import { useDispatch } from "react-redux";
+import { addImage, getImages } from "../redux/apiCalls";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getStorage,
   ref,
@@ -62,49 +62,41 @@ const Contributor = () => {
   const [inputs, setInputs] = useState({});
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
+  const imagesData = useSelector((state) => state.image.imagesData);
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    getImages(dispatch);
+    console.log(imagesData.length)
+  }, [dispatch]);
 
   const columns = [
     {
-      title: 'Name',
+      title: 'Image Name',
       dataIndex: 'name',
       key: 'name',
-      render: text => <a>{text}</a>,
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
+      title: 'Category',
+      dataIndex: 'category',
       key: 'age',
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
+      title: 'Total Download',
+      dataIndex: 'totalDownload',
       key: 'address',
     },
   ];
 
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-  ];
+
+  const data = [];
+  for (var i = 0; i < imagesData.length; i++) {
+    data.push({
+      key: `${i}`,
+      name: imagesData[i].name,
+      category: imagesData[i].category,
+      totalDownload: 0,
+    });
+  }
 
   const onUpload = () => {
     setSelectedBtn("upload");
@@ -116,7 +108,7 @@ const Contributor = () => {
   const handleClick = (e) => {
     e.preventDefault();
 
-
+    console.log("category :", inputs);
     const fileName = new Date().getTime() + image.name;
     const storage = getStorage(app);
     const storageRef = ref(storage, fileName);
@@ -179,7 +171,11 @@ const Contributor = () => {
           ?
           <>
             <Title>Download Report</Title>
-            <Table columns={columns} dataSource={data} pagination={{ current: 1, pageSize: 10 }} />
+            <Table columns={columns} dataSource={data} pagination={{
+              onChange(current) {
+                setPage(current);
+              }
+            }} />
           </>
           : <>
             <Title>Upload Image</Title>
@@ -198,7 +194,7 @@ const Contributor = () => {
               />
               <Label>Category:</Label>
               <select name="category" onChange={handleChange}>
-                <option value="Technology">Technology</option>
+                <option value="Technology" selected>Technology</option>
                 <option value="Marketing">Marketing</option>
                 <option value="B2B">B2B</option>
               </select>

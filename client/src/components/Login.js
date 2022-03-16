@@ -74,7 +74,6 @@ const Login = () => {
     }
 
   };
-  console.log(currentUser.user_type);
 
   return (
     <Container>
