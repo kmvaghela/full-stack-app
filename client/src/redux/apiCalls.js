@@ -1,5 +1,5 @@
 import { publicRequest, userRequest } from "../requestMethods";
-import { loginStart, loginSuccess, loginFailure, RegisterStart, RegisterSuccess, RegisterFailure, } from "./userRedux";
+import { loginStart, loginSuccess, loginFailure, logout, RegisterStart, RegisterSuccess, RegisterFailure, } from "./userRedux";
 import {
     addImageStart,
     addImageSuccess,
@@ -20,6 +20,10 @@ export const login = async (dispatch, user) => {
     } catch (error) {
         dispatch(loginFailure())
     }
+}
+
+export const logoutUser = async (dispatch) => {
+    dispatch(logout());
 }
 
 export const Register = async (details, dispatch) => {

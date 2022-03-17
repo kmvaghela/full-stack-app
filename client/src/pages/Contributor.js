@@ -10,6 +10,11 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import app from "../firebase";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../redux/apiCalls";
+
+
 
 const Container = styled.div`
   display:flex;
@@ -27,10 +32,23 @@ const Right = styled.div`
   padding:50px;
   border:1px solid gray;
 `;
+const Header = styled.div`
+display:flex;
+align-items:center;
+justify-content:space-between;
+`;
 const Title = styled.h3`
 margin-bottom:20px;
 `;
-
+const LogoutBtn = styled.button`
+padding:5px;
+width:80px;
+background-color: #B98F09;
+color: #6E260E;
+border:none;
+cursor: pointer;
+margin-bottom:20px;
+`;
 const Button = styled.button`
 width:100%;
 font-weight:${(props) => props.boldText ? 'bold' : ''};
@@ -61,7 +79,10 @@ const Contributor = () => {
   const [selectedBtn, setSelectedBtn] = useState("upload");
   const [inputs, setInputs] = useState({});
   const [image, setImage] = useState(null);
+
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const imagesData = useSelector((state) => state.image.imagesData);
   const user = useSelector((state) => state.user.currentUser.name);
 
@@ -104,6 +125,7 @@ const Contributor = () => {
   };
   const onDownload = () => {
     setSelectedBtn("download");
+
   };
 
   const handleClick = (e) => {
@@ -147,7 +169,8 @@ const Contributor = () => {
           const imageData = {
             ...inputs,
             img: downloadURL,
-            contributor:user,
+            contributor: user,
+            downloads: 0,
           };
           addImage(imageData, dispatch);
         });
@@ -160,7 +183,10 @@ const Contributor = () => {
       return { ...prev, [e.target.name]: e.target.value };
     });
   };
-
+  const onLogout = () => {
+    logoutUser(dispatch);
+    navigate("/");
+  };
   return (
     <Container>
       <Left>
@@ -171,7 +197,12 @@ const Contributor = () => {
         {selectedBtn === "download"
           ?
           <>
-            <Title>Download Report</Title>
+            <Header>
+              <Title>Download Report</Title>
+              <Link to="/" style={{ color: "black", textDecoration: "none" }}>
+                <LogoutBtn onClick={onLogout}>LOGOUT</LogoutBtn>
+              </Link>
+            </Header>
             <Table columns={columns} dataSource={data} pagination={{
               onChange(current) {
                 setPage(current);
@@ -179,7 +210,12 @@ const Contributor = () => {
             }} />
           </>
           : <>
-            <Title>Upload Image</Title>
+            <Header>
+              <Title>Upload Image</Title>
+              <Link to="/" style={{ color: "black", textDecoration: "none" }}>
+                <LogoutBtn onClick={onLogout}>LOGOUT</LogoutBtn>
+              </Link>
+            </Header>
             <Form>
               <Label>Image Name:</Label>
               <input

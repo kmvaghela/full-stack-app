@@ -1,9 +1,9 @@
 const router = require("express").Router();
-const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndContributor, verifyTokenAndNormalUser } = require("./verifyToken");
+const { verifyToken, verifyTokenAndAuthorization } = require("./verifyToken");
 const Image = require("../models/Image");
 
 //CREATE 
-router.post("/", verifyTokenAndContributor, async (req, res) => {
+router.post("/",verifyToken, async (req, res) => {
     const newImage = new Image(req.body)
     try {
         const savedImage = await newImage.save();

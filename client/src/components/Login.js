@@ -59,8 +59,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const handleClick = (e) => {
-    e.preventDefault();
+  const handleClick = () => {
     login(dispatch, { name, password });
     if (!error) {
       if (currentUser != null) {
@@ -78,9 +77,9 @@ const Login = () => {
     <Container>
       <Wrapper>
         <Title>Login</Title>
-        <Form>
-          <Input type="text" placeholder="Username" onChange={(e) => setName(e.target.value)} />
-          <Input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+        <Form >
+          <Input type="text" placeholder="Username" onChange={(e) => setName(e.target.value)} autocomplete="off"/>
+          <Input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} autocomplete="off"/>
           <Button onClick={handleClick} disabled={isFetching}>Login</Button>
         </Form>
       </Wrapper>

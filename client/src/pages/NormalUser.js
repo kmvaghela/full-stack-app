@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
-// import { getImages } from "../redux/apiCalls";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, Pagination, Button } from 'antd';
 import axios from "axios";
-// import { updateImage } from "../redux/apiCalls";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../redux/apiCalls";
 
 const Container = styled.div`
   display:flex;
@@ -25,6 +26,20 @@ const Right = styled.div`
   align-items:center;
   justify-content:space-between;
   border:1px solid gray;
+`;
+const Header = styled.div`
+display:flex;
+align-items:center;
+justify-content:flex-end;
+`;
+const LogoutBtn = styled.button`
+padding:5px;
+width:80px;
+background-color: #B98F09;
+color: #6E260E;
+border:none;
+cursor: pointer;
+margin-bottom:20px;
 `;
 const RightBody = styled.div`
 display:flex;
@@ -68,12 +83,15 @@ justify-content:center;
 const NormalUser = () => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    // const images = useSelector((state) => state.image.imagesData);
+
     const [images, setImages] = useState([]);
     const [downloadCount, setDownloadCount] = useState(0);
     const [page, setPage] = useState(1);
     const [category, setCategory] = useState("");
+    const [index, setIndex] = useState();
 
     useEffect(() => {
         const getImages = async () => {
@@ -87,10 +105,11 @@ const NormalUser = () => {
             } catch (error) { }
         };
         getImages();
-    }, [dispatch, category])
+    }, [dispatch, category, downloadCount])
 
-    const showModal = () => {
+    const showModal = (i) => {
         setIsModalVisible(true);
+        setIndex(i);
     };
 
     const handleOk = () => {
@@ -102,7 +121,6 @@ const NormalUser = () => {
     };
 
     const onDownload = async (item) => {
-        console.log(item);
         let id = item._id;
         let name = item.name;
         let img = item.img;
@@ -116,13 +134,18 @@ const NormalUser = () => {
                 img,
                 category,
                 contributor,
-                downloads: downloads+1,
+                downloads: downloads + 1,
             });
+            setIsModalVisible(false);
         } catch (error) { }
     };
     const handleChange = (e) => {
         setCategory(e.target.value);
 
+    };
+    const onLogout = () => {
+        logoutUser(dispatch);
+        navigate("/");
     };
     return (
         <Container>
@@ -142,32 +165,38 @@ const NormalUser = () => {
                 </RadioInput>
             </Left>
             <Right>
-                <RightBody>
-                    {images.map((item, i) => {
-                        return <>
-                            <Item key={item._id}>
-                                <Image src={item.img} alt="" onClick={showModal} />
-                                <Modal title="Download Image" footer={null} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                                    <ModalContainer>
-                                        <Item>
-                                            <Image src={item.img} alt="" />
-                                            <h4>Contributor: {item.contributor}</h4>
-                                            <h4>Image Name: {item.name}</h4>
-                                            <h4>Total Download: {item.downloads}</h4>
-                                        </Item>
-                                        <Button onClick={() => { onDownload(item) }}>Download</Button>
-                                    </ModalContainer>
-                                </Modal>
-                                <h4>Contributor: {item.contributor}</h4>
-                                <h4>Image Name: {item.name}</h4>
-                                <h4>Total Download: {item.downloads}</h4>
-                            </Item>
-                        </>
-                    })}
-                </RightBody>
+                <div>
+                    <Header>
+                        <Link to="/" style={{ color: "black", textDecoration: "none" }}>
+                            <LogoutBtn onClick={onLogout}>LOGOUT</LogoutBtn>
+                        </Link>
+                    </Header>
+                    <RightBody>
+                        {images.map((item, i) => {
+                            return <>
+                                <Item key={item._id}>
+                                    <Image src={item.img} alt="" onClick={() => showModal(i)} />
+                                    <h4>Contributor: {item.contributor}</h4>
+                                    <h4>Image Name: {item.name}</h4>
+                                    <h4>Total Download: {item.downloads}</h4>
+                                </Item>
+                            </>
+                        })}
+                    </RightBody>
+                </div>
                 <Pagination defaultCurrent={1} total={50} onChange={(current) => { setPage(current) }} />
             </Right>
-
+            <Modal title="Download Image" footer={null} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                <ModalContainer>
+                    <Item>
+                        <Image src={images[index]?.img} alt="" />
+                        <h4>Contributor: {images[index]?.contributor}</h4>
+                        <h4>Image Name: {images[index]?.name}</h4>
+                        <h4>Total Download: {images[index]?.downloads}</h4>
+                    </Item>
+                    <Button onClick={() => { onDownload(images[index]) }}>Download</Button>
+                </ModalContainer>
+            </Modal>
         </Container>
     )
 }

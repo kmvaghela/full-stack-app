@@ -26,24 +26,5 @@ const verifyTokenAndAuthorization = (req, res, next) => {
     })
 };
 
-const verifyTokenAndContributor = (req, res, next) => {
-    verifyToken(req, res, () => {
-        if (req.user.user_type==="Contributor") {
-            next();
-        } else {
-            res.status(403).json("You are not allowed to do that!")
-        }
-    })
-}
 
-const verifyTokenAndNormalUser = (req, res, next) => {
-    verifyToken(req, res, () => {
-        if (req.user.user_type==="Normal User") {
-            next();
-        } else {
-            res.status(403).json("You are not allowed to do that!")
-        }
-    })
-}
-
-module.exports = { verifyToken, verifyTokenAndAuthorization, verifyTokenAndContributor,verifyTokenAndNormalUser };
+module.exports = { verifyToken, verifyTokenAndAuthorization };

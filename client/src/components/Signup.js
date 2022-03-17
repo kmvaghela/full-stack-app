@@ -74,17 +74,17 @@ const Signup = () => {
     <Container>
       <Wrapper>
         <Title>Sign Up</Title>
-        <Form>
+        <Form autocomplete="off">
 
-          <Input type="text" name="name" placeholder="Name" onChange={handleChange} />
-          <Input type="email" name="email" placeholder="Email" onChange={handleChange} />
-          <Input type="password" name="password" placeholder="Password" onChange={handleChange} />
+          <Input type="text" name="name" placeholder="Name" onChange={handleChange} autocomplete="off"/>
+          <Input type="email" name="email" placeholder="Email" onChange={handleChange} autocomplete="off"/>
+          <Input type="password" name="password" placeholder="Password" onChange={handleChange} autocomplete="off"/>
           <RadioInput>
-            <input type="radio" name="user_type" value="Normal User" onChange={handleChange} />
+            <input type="radio" name="user_type" value="Normal User" onChange={handleChange}/>
             <label>Normal User</label>
           </RadioInput>
           <RadioInput>
-            <input type="radio" name="user_type" value="Contributor" onChange={handleChange} />
+            <input type="radio" name="user_type" value="Contributor" onChange={handleChange}/>
             <label>Contributor</label>
           </RadioInput>
           <Button onClick={handleClick}>Sign Up</Button>
